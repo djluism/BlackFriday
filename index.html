@@ -35,18 +35,26 @@
             box-sizing: border-box;
             transition: border-color 0.2s;
         }
-        input:focus {
-            outline: none;
-            border-color: #007bff;
-        }
+        input:focus { outline: none; border-color: #007bff; }
         .result-box {
             margin-top: 1.5rem;
             padding: 20px;
-            background: #e7f3ff;
+            background: #f8f9fa;
             border-radius: 8px;
+            border: 1px solid #eee;
         }
-        .label { font-size: 0.8rem; color: #0056b3; text-transform: uppercase; font-weight: bold; }
-        .total { font-size: 2.2rem; color: #0056b3; font-weight: 800; margin: 5px 0; }
+        .pos-instruction {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            border: 1px solid #ffeeba;
+        }
+        .label { font-size: 0.8rem; color: #6c757d; text-transform: uppercase; font-weight: bold; }
+        .total { font-size: 2.2rem; color: #28a745; font-weight: 800; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -55,9 +63,11 @@
     <h2>Price Calculator</h2>
     <p>$0.50 per item. Buy 20, get 10 free.</p>
     
-    <input type="number" id="quantity" placeholder="Number of items..." oninput="calculatePrice()">
+    <input type="number" id="quantity" placeholder="Actual items at counter..." oninput="calculatePrice()">
     
     <div class="result-box">
+        <div id="pos-display" class="pos-instruction">Enter 0 in POS</div>
+        
         <div class="label">Total Price (No Tax)</div>
         <div class="total" id="output">$0.00</div>
     </div>
@@ -67,13 +77,17 @@
     function calculatePrice() {
         const input = document.getElementById('quantity');
         const output = document.getElementById('output');
+        const posDisplay = document.getElementById('pos-display');
+        
         const q = parseInt(input.value) || 0;
 
-        // Formula: TotalItems - (10 free items for every 30 in the cart)
+        // Logic: 10 free items for every full block of 30
         const freeItems = Math.floor(q / 30) * 10;
         const billableItems = q - freeItems;
         const totalCost = billableItems * 0.50;
 
+        // Update the display
+        posDisplay.innerText = "Enter " + billableItems + " in POS";
         output.innerText = "$" + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 </script>
