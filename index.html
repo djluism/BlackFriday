@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>POS Dashboard</title>
+    <title>Neon POS Dashboard</title>
     <style>
         :root {
             --bg: #000000;
-            --accent: #28a745;
-            --pos-highlight: #ffc107;
-            --input-bg: #1a1a1a;
+            /* Neon Colors */
+            --neon-red: #ff3131;
+            --neon-yellow: #fff200;
+            --neon-green: #39ff14;
+            --input-bg: #0a0a0a;
         }
         body {
             font-family: -apple-system, system-ui, sans-serif;
@@ -18,8 +20,8 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            padding: 10px;
-            overflow: hidden; /* Prevents bouncing */
+            padding: 20px 15px; /* Extra top padding to fix the "out of bounds" look */
+            overflow: hidden;
         }
         .container {
             width: 100%;
@@ -27,58 +29,77 @@
             text-align: center;
         }
         .label-main { 
-            font-size: 0.9rem; 
-            color: #888; 
+            font-size: 1rem; 
+            color: var(--neon-red); 
             text-transform: uppercase; 
             letter-spacing: 2px;
-            margin-top: 10px;
+            font-weight: 900;
+            text-shadow: 0 0 5px var(--neon-red), 0 0 10px var(--neon-red);
+            margin-bottom: 10px;
         }
         input {
             width: 100%;
             padding: 15px;
-            margin: 10px 0 20px 0;
+            margin-bottom: 25px;
             background: var(--input-bg);
-            border: 2px solid #333;
+            border: 2px solid var(--neon-red);
             border-radius: 12px;
-            font-size: 2.5rem; 
+            font-size: 2.8rem; 
             color: white;
             text-align: center;
             font-weight: 800;
+            box-shadow: inset 0 0 10px var(--neon-red), 0 0 15px rgba(255, 49, 49, 0.2);
+            box-sizing: border-box; /* Keeps border inside the box */
         }
 
-        /* Side-by-Side Layout */
         .results-grid {
             display: flex;
-            gap: 10px;
-            height: 180px; /* Fixed height to stay above keyboard */
+            gap: 12px;
+            height: 190px;
         }
 
-        /* Left Side: POS Command */
+        /* Left Side: Neon Yellow POS */
         .pos-box {
-            flex: 1.5; /* Takes more room */
-            background: var(--pos-highlight);
-            color: #000;
+            flex: 1.4;
+            background: #000;
+            border: 3px solid var(--neon-yellow);
+            color: var(--neon-yellow);
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             line-height: 1.1;
+            box-shadow: 0 0 15px rgba(255, 242, 0, 0.3);
+            text-shadow: 0 0 5px var(--neon-yellow);
         }
-        .small-txt { font-size: 1rem; font-weight: 800; text-transform: uppercase; }
-        .big-num { font-size: 4.5rem; font-weight: 900; margin: 5px 0; }
+        .small-txt { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; }
+        .big-num { font-size: 5rem; font-weight: 900; margin: 5px 0; }
 
-        /* Right Side: Total Price */
+        /* Right Side: Neon Green Price */
         .price-box {
             flex: 1;
-            background: #111;
-            border: 2px solid #222;
+            background: #000;
+            border: 3px solid var(--neon-green);
             border-radius: 16px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
         }
-        .price-label { font-size: 0.7rem; color: #666; text-transform: uppercase; margin-bottom: 5px; }
-        .price-total { font-size: 1.8rem; color: var(--accent); font-weight: 800; }
+        .price-label { 
+            font-size: 0.7rem; 
+            color: var(--neon-green); 
+            text-transform: uppercase; 
+            font-weight: 800;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        .price-total { 
+            font-size: 2rem; 
+            color: var(--neon-green); 
+            font-weight: 900; 
+            text-shadow: 0 0 8px var(--neon-green);
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -95,9 +116,9 @@
         </div>
 
         <div class="price-box">
-            <div class="price-label">Total Price</div>
+            <div class="price-label">TOTAL PRICE</div>
             <div id="output" class="price-total">$0.00</div>
-            <div class="price-label" style="margin-top: 10px;">(No Tax)</div>
+            <div class="price-label" style="font-size: 0.6rem; opacity: 0.7;">(NO TAX)</div>
         </div>
     </div>
 </div>
@@ -105,7 +126,6 @@
 <script>
     function calculatePrice() {
         const q = parseInt(document.getElementById('quantity').value) || 0;
-
         const freeItems = Math.floor(q / 30) * 10;
         const billableItems = q - freeItems;
         const totalCost = billableItems * 0.50;
