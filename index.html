@@ -7,10 +7,10 @@
     <style>
         :root {
             --bg: #000000;
-            --card-bg: #111111;
+            --card-bg: #000000; /* Pure black for total immersion */
             --accent: #28a745;
             --text: #ffffff;
-            --pos-bg: #ffc107;
+            --pos-highlight: #ffc107;
         }
         body {
             font-family: -apple-system, system-ui, sans-serif;
@@ -21,59 +21,71 @@
             margin: 0;
             background-color: var(--bg);
             color: var(--text);
-            padding-top: 20px;
+            padding: 10px;
         }
         .calculator-card {
-            background: var(--card-bg);
-            padding: 2rem;
             width: 100%;
             max-width: 500px;
-            min-height: 90vh; /* Covers most of the screen */
             text-align: center;
             box-sizing: border-box;
         }
-        h2 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: -1px; }
-        .sub-head { color: #888; font-size: 1.1rem; margin-bottom: 2rem; }
+        .label-main { 
+            font-size: 1.2rem; 
+            color: #888; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-top: 20px;
+        }
         
         input {
             width: 100%;
-            padding: 20px;
-            margin: 20px 0;
-            background: #222;
+            padding: 25px;
+            margin: 15px 0 40px 0;
+            background: #1a1a1a;
             border: 2px solid #333;
             border-radius: 12px;
-            font-size: 2rem; /* Big font for entry */
+            font-size: 3rem; 
             color: white;
             text-align: center;
             box-sizing: border-box;
+            font-weight: 800;
         }
-        input:focus { outline: none; border-color: #007bff; }
+        input:focus { outline: none; border-color: var(--pos-highlight); }
 
-        .pos-instruction {
-            background: var(--pos-bg);
+        /* The 3-Line Instruction Stack */
+        .pos-stack {
+            background: var(--pos-highlight);
             color: #000;
-            padding: 25px;
-            border-radius: 12px;
-            font-weight: 900;
-            margin-bottom: 30px;
-            font-size: 1.8rem; /* Massive for the associate */
-            text-transform: uppercase;
+            padding: 30px 10px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1;
         }
-        .label { font-size: 1rem; color: #888; text-transform: uppercase; font-weight: bold; margin-top: 20px; }
-        .total { font-size: 4.5rem; color: var(--accent); font-weight: 900; margin: 10px 0; }
+        .stack-line { font-size: 1.8rem; font-weight: 800; text-transform: uppercase; }
+        .stack-number { font-size: 7rem; font-weight: 900; margin: 10px 0; }
+
+        .price-label { font-size: 1rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .total { font-size: 4rem; color: var(--accent); font-weight: 900; margin: 5px 0; }
     </style>
 </head>
 <body>
 
 <div class="calculator-card">
-    <h2>Price Calc</h2>
-    <div class="sub-head">$0.50 ea | Buy 20, Get 10 Free</div>
+    <div class="label-main">Number of Items</div>
     
-    <input type="number" id="quantity" pattern="\d*" inputmode="numeric" placeholder="Qty Counter" oninput="calculatePrice()">
+    <input type="number" id="quantity" pattern="\d*" inputmode="numeric" placeholder="0" oninput="calculatePrice()">
     
-    <div id="pos-display" class="pos-instruction">Enter 0 in POS</div>
+    <div class="pos-stack">
+        <div class="stack-line">ENTER</div>
+        <div id="pos-num" class="stack-number">0</div>
+        <div class="stack-line">IN POS</div>
+    </div>
     
-    <div class="label">Total Price (No Tax)</div>
+    <div class="price-label">Total Price (No Tax)</div>
     <div class="total" id="output">$0.00</div>
 </div>
 
@@ -81,15 +93,16 @@
     function calculatePrice() {
         const input = document.getElementById('quantity');
         const output = document.getElementById('output');
-        const posDisplay = document.getElementById('pos-display');
+        const posNum = document.getElementById('pos-num');
         
         const q = parseInt(input.value) || 0;
 
+        // Formula: 10 free for every 30
         const freeItems = Math.floor(q / 30) * 10;
         const billableItems = q - freeItems;
         const totalCost = billableItems * 0.50;
 
-        posDisplay.innerText = "Enter " + billableItems + " in POS";
+        posNum.innerText = billableItems;
         output.innerText = "$" + totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 </script>
